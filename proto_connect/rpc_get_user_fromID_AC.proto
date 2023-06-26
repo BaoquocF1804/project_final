@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb_connect;
+option go_package = ".;pb_connect";
+
+
+message GetAccountRequest {
+  int32 ID = 1;
+}
+
+message GetUserResponse {
+  string username = 1;
+  string full_name = 2;
+  string email = 3;
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb_user;
+
+import "user.proto";
+
+option go_package = ".;pb_user";
+
+message GetUserRequest {
+  string username = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
