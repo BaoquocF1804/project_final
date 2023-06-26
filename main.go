@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"github.com/go-sql-driver/mysql"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"net/http"
@@ -62,27 +64,17 @@ func runGatewayServerUser(config util.Config, store *db.Queries) {
 	if err != nil {
 		log.Fatal("cannot create server: ", err)
 	}
-	//fmt.Println(grpc.Version)
-	grpcMux := runtime.NewServeMux()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	err = pb_user.RegisterUserBankHandlerServer(ctx, grpcMux, server)
-	if err != nil {
-		log.Fatal("cannot register handler sever", err)
-	}
-
-	mux := http.NewServeMux()
-	mux.Handle("/", grpcMux)
-
-	listener, err := net.Listen("tcp", serverAddressUser)
+	grpcServer := grpc.NewServer()
+	pb_user.RegisterUserBankServer(grpcServer, server)
+	reflection.Register(grpcServer)
+	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	if err != nil {
 		log.Fatal("cannot create listener: ", err)
 	}
-	log.Printf("start API_user gateway server at %s", listener.Addr().String())
-	err = http.Serve(listener, mux)
+	log.Printf("start gRPC %s", listener.Addr().String())
+	err = grpcServer.Serve(listener)
 	if err != nil {
-		log.Fatal("cannot start API_user gateway server: ", err)
+		log.Fatal("cannot start gRPC: ", err)
 	}
 }
 
@@ -91,27 +83,17 @@ func runGatewayServerAccount(config util.Config, store *db.Queries) {
 	if err != nil {
 		log.Fatal("cannot create server: ", err)
 	}
-	//fmt.Println(grpc.Version)
-	grpcMux := runtime.NewServeMux()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	err = pb_account.RegisterAccountBankHandlerServer(ctx, grpcMux, server)
-	if err != nil {
-		log.Fatal("cannot register handler sever", err)
-	}
-
-	mux := http.NewServeMux()
-	mux.Handle("/", grpcMux)
-
+	grpcServer := grpc.NewServer()
+	pb_account.RegisterAccountBankServer(grpcServer, server)
+	reflection.Register(grpcServer)
 	listener, err := net.Listen("tcp", serverAddressAccount)
 	if err != nil {
 		log.Fatal("cannot create listener: ", err)
 	}
-	log.Printf("start API_Account gateway server at %s", listener.Addr().String())
-	err = http.Serve(listener, mux)
+	log.Printf("start gRPC %s", listener.Addr().String())
+	err = grpcServer.Serve(listener)
 	if err != nil {
-		log.Fatal("cannot start API_Account gateway server: ", err)
+		log.Fatal("cannot start gRPC: ", err)
 	}
 }
 func runGatewayServerConnect(config util.Config, store *db.Queries) {

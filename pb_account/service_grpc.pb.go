@@ -8,6 +8,7 @@ package pb_account
 
 import (
 	context "context"
+	"fmt"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -45,7 +46,9 @@ func (c *accountBankClient) CreateAccount(ctx context.Context, in *CreateAccount
 
 func (c *accountBankClient) GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error) {
 	out := new(GetAccountResponse)
+	//fmt.Println("----------------bao__________")
 	err := c.cc.Invoke(ctx, "/pb_account.AccountBank/GetAccount", in, out, opts...)
+	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}
