@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/aead/chacha20poly1305 v0.0.0-20201124145622-1a5aba2a8b29
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0

@@ -255,7 +255,7 @@ func RegisterUserBankHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "UserBankClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "UserBankClient" to call the correct interceptors.
-func RegisterUserBankHandlerClient(ctx context.Context, mux *runtime.ServeMux, client UserBankClient) error {
+	func RegisterUserBankHandlerClient(ctx context.Context, mux *runtime.ServeMux, client UserBankClient) error {
 
 	mux.Handle("POST", pattern_UserBank_CreateUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
