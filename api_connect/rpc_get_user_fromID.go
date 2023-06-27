@@ -2,10 +2,8 @@ package api_connect
 
 import (
 	"context"
-	"fmt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/proto"
 	"log"
 	"project_T4/pb_account"
 	"project_T4/pb_connect"
@@ -17,9 +15,8 @@ func (server *Server) GetUserFromID(ctx context.Context, req *pb_connect.GetAcco
 	accountReq := &pb_account.GetAccountRequest{
 		ID: req.GetID(),
 	}
-	size := proto.Size(accountReq)
-	fmt.Println("Message size:", size)
-	arg, err := server.accountClient.GetAccount(context.Background(), accountReq)
+
+	arg, err := server.accountAdapter.GetAccount(ctx, accountReq)
 	//fmt.Println(err)
 	if err != nil {
 		log.Fatalf("GetAccount RPC failed: %v", err)
@@ -27,7 +24,7 @@ func (server *Server) GetUserFromID(ctx context.Context, req *pb_connect.GetAcco
 	accountReq2 := &pb_user.GetUserRequest{
 		Username: arg.Account.Owner,
 	}
-	arg1, err := server.userClient.GetUser(ctx, accountReq2)
+	arg1, err := server.userAdapter.GetUser(ctx, accountReq2)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "no user")
 	}
