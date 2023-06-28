@@ -4,31 +4,33 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	"log"
-	"project_T4/pb_user"
+	pb_user2 "project_T4/proto/user/pb_user"
 )
 
 type UserBankAdapter interface {
-	GetUser(ctx context.Context, in *pb_user.GetUserRequest) (*pb_user.GetUserResponse, error)
+	GetUser(ctx context.Context, in *pb_user2.GetUserRequest) (*pb_user2.GetUserResponse, error)
 }
 
 type userBankAdapter struct {
-	userBankClient pb_user.UserBankClient
+	userBankClient pb_user2.UserBankClient
 }
 
 func NewUserBankAdapter(addr string) UserBankAdapter {
-	conn, err := grpc.Dial(
+	connectUser, err := grpc.Dial(
 		addr,
 		grpc.WithInsecure(),
 	)
 	if err != nil {
 		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}
-	clientUser := pb_user.NewUserBankClient(conn)
+
+	clientUser := pb_user2.NewUserBankClient(connectUser)
+
 	return &userBankAdapter{
 		userBankClient: clientUser,
 	}
 }
 
-func (a *userBankAdapter) GetUser(ctx context.Context, in *pb_user.GetUserRequest) (*pb_user.GetUserResponse, error) {
+func (a *userBankAdapter) GetUser(ctx context.Context, in *pb_user2.GetUserRequest) (*pb_user2.GetUserResponse, error) {
 	return a.userBankClient.GetUser(ctx, in)
 }

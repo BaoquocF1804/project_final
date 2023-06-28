@@ -10,14 +10,14 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"project_T4/api_account"
-	"project_T4/api_connect"
-	"project_T4/api_user"
+	"project_T4/config"
 	db "project_T4/db/sqlc"
-	"project_T4/pb_account"
-	"project_T4/pb_connect"
-	"project_T4/pb_user"
-	"project_T4/util"
+	"project_T4/proto/account/pb_account"
+	"project_T4/proto/connect/pb_connect"
+	"project_T4/proto/user/pb_user"
+	"project_T4/service/api_account"
+	"project_T4/service/api_connect"
+	"project_T4/service/api_user"
 )
 
 var conn *sql.DB
@@ -27,10 +27,11 @@ const serverAddressAccount = "0.0.0.0:8082"
 const serverAddressConnect = "0.0.0.0:8084"
 
 func main() {
-	config_1, err := util.LoadConfig(".")
+	config_1, err := config.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config")
 	}
+
 	cfg := mysql.Config{
 		User:                 ("root"),
 		Passwd:               ("secret"),
@@ -40,37 +41,38 @@ func main() {
 		AllowNativePasswords: true,
 		ParseTime:            true,
 	}
+
 	// Get a database handle.
 	conn, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	store := db.New(conn)
-	//server := api.NewSever(store)
-	//err = server.Start(serverAddress)
 	if err != nil {
 		log.Fatal("cannot start server:", err)
 	}
+
 	go runGatewayServerAccount(config_1, store)
 	go runGatewayServerUser(config_1, store)
-
 	runGatewayServerConnect(config_1, store)
-	//go runGatewayServer(config, store)
-
 }
 
-func runGatewayServerUser(config util.Config, store *db.Queries) {
+func runGatewayServerUser(config config.Config, store *db.Queries) {
 	server, err := api_user.NewSever(config, store)
 	if err != nil {
 		log.Fatal("cannot create server: ", err)
 	}
+
 	grpcServer := grpc.NewServer()
 	pb_user.RegisterUserBankServer(grpcServer, server)
 	reflection.Register(grpcServer)
-	listener, err := net.Listen("tcp", config.GRPCServerAddress)
+
+	listener, err := net.Listen("tcp", serverAddressUser)
 	if err != nil {
 		log.Fatal("cannot create listener: ", err)
 	}
+
 	log.Printf("start gRPC %s", listener.Addr().String())
 	err = grpcServer.Serve(listener)
 	if err != nil {
@@ -78,25 +80,28 @@ func runGatewayServerUser(config util.Config, store *db.Queries) {
 	}
 }
 
-func runGatewayServerAccount(config util.Config, store *db.Queries) {
+func runGatewayServerAccount(config config.Config, store *db.Queries) {
 	server, err := api_account.NewSever(config, store)
 	if err != nil {
 		log.Fatal("cannot create server: ", err)
 	}
+
 	grpcServer := grpc.NewServer()
 	pb_account.RegisterAccountBankServer(grpcServer, server)
 	reflection.Register(grpcServer)
+
 	listener, err := net.Listen("tcp", serverAddressAccount)
 	if err != nil {
 		log.Fatal("cannot create listener: ", err)
 	}
+
 	log.Printf("start gRPC %s", listener.Addr().String())
 	err = grpcServer.Serve(listener)
 	if err != nil {
 		log.Fatal("cannot start gRPC: ", err)
 	}
 }
-func runGatewayServerConnect(config util.Config, store *db.Queries) {
+func runGatewayServerConnect(config config.Config, store *db.Queries) {
 	server2, err := api_connect.NewSever(config, store)
 	if err != nil {
 		log.Fatal("cannot create server: ", err)
@@ -118,6 +123,7 @@ func runGatewayServerConnect(config util.Config, store *db.Queries) {
 	if err != nil {
 		log.Fatal("cannot create listener: ", err)
 	}
+
 	log.Printf("start Connect 2API gateway server at %s", listener.Addr().String())
 	err = http.Serve(listener, mux)
 	if err != nil {

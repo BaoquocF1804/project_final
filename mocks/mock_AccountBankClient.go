@@ -7,7 +7,7 @@ import (
 
 	grpc "google.golang.org/grpc"
 
-	pb_account "project_T4/pb_account"
+	pb_account "project_T4/proto/account/pb_account"
 
 	"github.com/stretchr/testify/mock"
 )

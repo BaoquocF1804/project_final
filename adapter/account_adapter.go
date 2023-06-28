@@ -2,10 +2,9 @@ package adapter
 
 import (
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
 	"log"
-	"project_T4/pb_account"
+	"project_T4/proto/account/pb_account"
 )
 
 type AccountBankAdapter interface {
@@ -16,16 +15,16 @@ type accountBankAdapter struct {
 	accountBankClient pb_account.AccountBankClient
 }
 
-func NewAccountBankAdapter(addr string) AccountBankAdapter {
-	conn1, err := grpc.Dial(
+func NewAccountBankAdapter(addr string) *accountBankAdapter {
+	connectAccount, err := grpc.Dial(
 		addr,
 		grpc.WithInsecure(),
 	)
-	fmt.Println(addr)
 	if err != nil {
 		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}
-	clientAccount := pb_account.NewAccountBankClient(conn1)
+
+	clientAccount := pb_account.NewAccountBankClient(connectAccount)
 	return &accountBankAdapter{
 		accountBankClient: clientAccount,
 	}
@@ -33,5 +32,4 @@ func NewAccountBankAdapter(addr string) AccountBankAdapter {
 
 func (a *accountBankAdapter) GetAccount(ctx context.Context, in *pb_account.GetAccountRequest) (*pb_account.GetAccountResponse, error) {
 	return a.accountBankClient.GetAccount(ctx, in)
-
 }

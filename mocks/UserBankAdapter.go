@@ -4,7 +4,7 @@ package mocks
 
 import (
 	context "context"
-	pb_user "project_T4/pb_user"
+	"project_T4/proto/user/pb_user"
 
 	mock "github.com/stretchr/testify/mock"
 )
