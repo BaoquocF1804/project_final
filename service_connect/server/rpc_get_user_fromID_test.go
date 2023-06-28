@@ -1,4 +1,4 @@
-package api_connect
+package server
 
 import (
 	"context"
@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"project_T4/mocks"
 	_ "project_T4/mocks"
-	"project_T4/proto/account/pb_account"
-	"project_T4/proto/connect/pb_connect"
-	pb_user2 "project_T4/proto/user/pb_user"
+	pb_account2 "project_T4/service_account/account/pb_account"
+	"project_T4/service_connect/connect/pb_connect"
+	"project_T4/service_user/user/pb_user"
 	"testing"
 )
 
@@ -25,16 +25,16 @@ func TestGetUserFromID(t *testing.T) {
 	}
 
 	// Thiết lập phản hồi của mocks adapter cho GetAccount
-	mockAccountResponse := &pb_account.GetAccountResponse{
-		Account: &pb_account.Account{
+	mockAccountResponse := &pb_account2.GetAccountResponse{
+		Account: &pb_account2.Account{
 			Owner: "mocked_username",
 		},
 	}
 	mockServer.accountAdapter.(*mocks.AccountBankAdapter).On("GetAccount", context.Background(), mock.AnythingOfType("*pb_account.GetAccountRequest")).Return(mockAccountResponse, nil)
 
 	// Thiết lập phản hồi của mocks adapter cho GetUser
-	mockUserResponse := &pb_user2.GetUserResponse{
-		User: &pb_user2.User{
+	mockUserResponse := &pb_user.GetUserResponse{
+		User: &pb_user.User{
 			Username: "mocked_username",
 			FullName: "Mocked User",
 			Email:    "mocked_email@example.com",

@@ -4,15 +4,15 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	"log"
-	"project_T4/proto/account/pb_account"
+	pb_account2 "project_T4/service_account/account/pb_account"
 )
 
 type AccountBankAdapter interface {
-	GetAccount(ctx context.Context, in *pb_account.GetAccountRequest) (*pb_account.GetAccountResponse, error)
+	GetAccount(ctx context.Context, in *pb_account2.GetAccountRequest) (*pb_account2.GetAccountResponse, error)
 }
 
 type accountBankAdapter struct {
-	accountBankClient pb_account.AccountBankClient
+	accountBankClient pb_account2.AccountBankClient
 }
 
 func NewAccountBankAdapter(addr string) *accountBankAdapter {
@@ -24,12 +24,12 @@ func NewAccountBankAdapter(addr string) *accountBankAdapter {
 		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}
 
-	clientAccount := pb_account.NewAccountBankClient(connectAccount)
+	clientAccount := pb_account2.NewAccountBankClient(connectAccount)
 	return &accountBankAdapter{
 		accountBankClient: clientAccount,
 	}
 }
 
-func (a *accountBankAdapter) GetAccount(ctx context.Context, in *pb_account.GetAccountRequest) (*pb_account.GetAccountResponse, error) {
+func (a *accountBankAdapter) GetAccount(ctx context.Context, in *pb_account2.GetAccountRequest) (*pb_account2.GetAccountResponse, error) {
 	return a.accountBankClient.GetAccount(ctx, in)
 }

@@ -1,15 +1,15 @@
-package api_user
+package server
 
 import (
 	"fmt"
 	"project_T4/config"
 	db "project_T4/db/sqlc"
-	"project_T4/proto/user/pb_user"
+	"project_T4/service_account/account/pb_account"
 	"project_T4/token"
 )
 
 type Server struct {
-	pb_user.UnimplementedUserBankServer
+	pb_account.UnimplementedAccountBankServer
 	config     config.Config
 	store      *db.Queries
 	tokenMaker token.Maker
@@ -27,5 +27,6 @@ func NewSever(config config.Config, store *db.Queries) (*Server, error) {
 		store:      store,
 		tokenMaker: tokenMaker,
 	}
+
 	return server, nil
 }

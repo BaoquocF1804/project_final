@@ -1,11 +1,11 @@
-package api_connect
+package server
 
 import (
 	"fmt"
-	"project_T4/adapter"
 	"project_T4/config"
 	db "project_T4/db/sqlc"
-	"project_T4/proto/connect/pb_connect"
+	adapter2 "project_T4/service_connect/adapter"
+	"project_T4/service_connect/connect/pb_connect"
 	"project_T4/token"
 )
 
@@ -14,8 +14,8 @@ type Server struct {
 	config         config.Config
 	store          *db.Queries
 	tokenMaker     token.Maker
-	accountAdapter adapter.AccountBankAdapter
-	userAdapter    adapter.UserBankAdapter
+	accountAdapter adapter2.AccountBankAdapter
+	userAdapter    adapter2.UserBankAdapter
 }
 
 func NewSever(config config.Config, store *db.Queries) (*Server, error) {
@@ -24,8 +24,8 @@ func NewSever(config config.Config, store *db.Queries) (*Server, error) {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
 	}
 
-	accountAdapter := adapter.NewAccountBankAdapter("localhost:8082")
-	userAdapter := adapter.NewUserBankAdapter("localhost:8080")
+	accountAdapter := adapter2.NewAccountBankAdapter("localhost:8082")
+	userAdapter := adapter2.NewUserBankAdapter("localhost:8080")
 
 	server := &Server{
 		config:         config,

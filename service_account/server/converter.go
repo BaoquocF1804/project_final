@@ -1,9 +1,9 @@
-package api_account
+package server
 
 import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 	db "project_T4/db/sqlc"
-	"project_T4/proto/account/pb_account"
+	"project_T4/service_account/account/pb_account"
 )
 
 func convertUser(account db.Account) *pb_account.Account {

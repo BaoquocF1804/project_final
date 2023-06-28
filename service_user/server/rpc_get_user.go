@@ -1,16 +1,16 @@
-package api_user
+package server
 
 import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"project_T4/proto/user/pb_user"
+	"project_T4/service_user/user/pb_user"
 )
 
 func (server *Server) GetUser(ctx context.Context, req *pb_user.GetUserRequest) (*pb_user.GetUserResponse, error) {
 	arg, err := server.store.GetUser(ctx, req.GetUsername())
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "no account")
+		return nil, status.Errorf(codes.NotFound, "no user")
 	}
 
 	rsp := &pb_user.GetUserResponse{
