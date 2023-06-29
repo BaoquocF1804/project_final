@@ -25,4 +25,12 @@ proto_account:
         --openapiv2_out=pb_account/openapiv2_account \
         proto_account/*.proto
 
-.PHONY: sqlc proto_user proto_connect proto_account
+server_user:
+	go run service_user/server.go
+
+server_account:
+	go run service_account/server.go
+
+server_connect:
+	go run service_connect/server.go
+.PHONY: sqlc proto_user proto_connect proto_account server_user server_account server_connect
